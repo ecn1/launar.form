@@ -87,7 +87,7 @@ npm start
 
 Same story as [launar.mod](https://github.com/ecn1/launar.mod): any free Node.js host works.
 
-- **Pterodactyl-style panels** (HeavenCloud, Bot-Hosting.net, …): upload the project (no `node_modules`), set the env variables (`DISCORD_TOKEN`, `CLIENT_ID`, `GOOGLE_SERVICE_ACCOUNT_JSON`), entry point `index.js`, Node 18+, start. The startup script's automatic `npm install` covers dependencies.
+- **Pterodactyl-style panels** ([Silly Development](https://sillydev.co.uk), HeavenCloud, Bot-Hosting.net, …): upload the project (no `node_modules`), set the env variables (`DISCORD_TOKEN`, `CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REFRESH_TOKEN`), entry point `index.js`, Node 18+, start. On SillyDev's free plan there are **no renewals** and dependencies install from `package.json` automatically; if the panel has no variable UI, upload a `.env` with those values instead — the bot reads both.
 - If the panel can't hold a giant single-line variable, upload a `.env` file via the File Manager instead — the bot reads both.
 - `/shareform`, `/formlist` and `/help` work even without the Google key — handy if you want the bot live before finishing the Google setup.
 
