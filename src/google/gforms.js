@@ -93,15 +93,30 @@ async function makePublic(formId) {
   });
 }
 
-/** Updates a form's title and/or description via the Forms API. */
+/** Updates a form's title and/or description via the Forms API.
+ *  Note: the direct PATCH /v1/forms/{id} route returns 404 in practice, so
+ *  updates go through :batchUpdate — and its updateMask paths are RELATIVE to
+ *  info ("title", "description"), not "info.title". */
 async function updateForm(formId, { title, description }) {
   const masks = [];
-  if (title !== undefined) masks.push('info.title');
-  if (description !== undefined) masks.push('info.description');
+  if (title !== undefined) masks.push('title');
+  if (description !== undefined) masks.push('description');
 
-  await callGoogle(`${FORMS_BASE}/${encodeURIComponent(formId)}?updateMask=${masks.join(',')}`, {
-    method: 'PATCH',
-    body: { info: { ...(title !== undefined ? { title } : {}), ...(description !== undefined ? { description } : {}) } },
+  await callGoogle(`${FORMS_BASE}/${encodeURIComponent(formId)}:batchUpdate`, {
+    method: 'POST',
+    body: {
+      requests: [
+        {
+          updateFormInfo: {
+            info: {
+              ...(title !== undefined ? { title } : {}),
+              ...(description !== undefined ? { description } : {}),
+            },
+            updateMask: masks.join(','),
+          },
+        },
+      ],
+    },
   });
 }
 
