@@ -1,0 +1,15 @@
+# Secrets
+.env
+service-account*.json
+*service-account*.json
+
+# Dependencies
+node_modules/
+
+# Runtime data (form registry)
+data/*.json
+
+# Logs & OS noise
+*.log
+.DS_Store
+Thumbs.db

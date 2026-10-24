@@ -1,0 +1,26 @@
+{
+  "name": "launar.form",
+  "version": "1.0.0",
+  "description": "🌙 launar.form — a Discord bot that creates Google Forms and posts them as aesthetic embed cards with an Open Form button.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node src/deploy-commands.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "google-forms",
+    "forms",
+    "discord.js"
+  ],
+  "author": "launar.form",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5"
+  }
+}
