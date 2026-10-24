@@ -55,8 +55,16 @@ One-time, ~5 minutes:
 5. Give the bot the key: either
    - set `GOOGLE_SERVICE_ACCOUNT_JSON` to the **entire contents** of that file (easiest on Pterodactyl panels), or
    - upload the file next to the bot and set `GOOGLE_SERVICE_ACCOUNT_FILE=service-account.json`.
+6. **Share a Drive folder with the service account** (required for `/createform` on free Gmail projects — service accounts have no storage of their own):
+   - Go to [drive.google.com](https://drive.google.com) → **New → Folder** → name it `launar.forms`.
+   - Right-click the folder → **Share** → paste the service-account email (shown in the key file as `client_email`, e.g. `launar-form@your-project.iam.gserviceaccount.com`) → give it **Editor** → send.
+   - Copy the folder ID from its URL (`…/folders/`**`THIS_PART`**) and set `GOOGLE_FORMS_FOLDER_ID` to it.
 
-> Forms created by the bot live in the service account's own Drive — nobody needs to share anything with you, and respondents just see a normal form.
+   Every bot-created form lands in that folder and counts against **your** Drive quota (a form costs ~0 MB — it's a doc, not a file).
+
+> Forms the bot creates land in your shared `launar.forms` folder and respondents just see a normal form — no sign-in, no extra steps.
+
+> ⚠️ On free Gmail projects the SA can't create files at the Drive root (no storage quota) — that's what step 6 fixes. If `/createform` ever reports a storage-quota error, the folder isn't shared or `GOOGLE_FORMS_FOLDER_ID` is missing.
 
 ### 3. Configure & run
 
