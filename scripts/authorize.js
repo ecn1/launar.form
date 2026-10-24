@@ -8,25 +8,21 @@
 // (an OAuth client of type "Desktop app" in the same Google Cloud project).
 
 require('dotenv').config();
-const {
-  googleOAuthClientId,
-  googleOAuthClientSecret,
-  googleFormsFolderId,
-} = require('../src/config');
+const { googleOAuthClientId, googleOAuthClientSecret } = require('../src/config');
 
+// Narrow scopes only: forms.body (create/patch forms) + drive.file (manage the
+// files the bot itself creates). The full "drive" scope is RESTRICTED and
+// would be blocked for an unverified app; drive.folder is not a valid OAuth
+// scope, so OAuth-mode forms live in MyDrive root.
 const SCOPES = 'https://www.googleapis.com/auth/forms.body https://www.googleapis.com/auth/drive.file';
 const REDIRECT = 'http://localhost:1'; // fails to load — copy the code from the address bar
-
-const FOLDER_SCOPE_URL = googleFormsFolderId
-  ? `https://www.googleapis.com/auth/drive.folder ${SCOPES}`
-  : SCOPES;
 
 function authUrl() {
   const params = new URLSearchParams({
     client_id: googleOAuthClientId,
     redirect_uri: REDIRECT,
     response_type: 'code',
-    scope: FOLDER_SCOPE_URL,
+    scope: SCOPES,
     access_type: 'offline',
     prompt: 'consent', // guarantees a refresh_token is returned
   });

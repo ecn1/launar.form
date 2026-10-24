@@ -17,25 +17,23 @@ const {
   googleOAuthRefreshToken,
   googleOAuthClientId,
   googleOAuthClientSecret,
-  googleFormsFolderId,
 } = require('../config');
 
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 // Scope sets differ by mode: the service-account path can use the full Drive
 // scope (no consent screens involved), while the OAuth path must stick to the
-// narrow drive.file/drive.folder scopes — the full "drive" scope is
-// RESTRICTED and unusable without a verified app.
+// narrow drive.file scope — the full "drive" scope is RESTRICTED and unusable
+// without a verified app. (OAuth forms therefore live in MyDrive root; the
+// GOOGLE_FORMS_FOLDER_ID option only applies to service-account mode.)
 const SA_SCOPES = 'https://www.googleapis.com/auth/forms.body https://www.googleapis.com/auth/drive';
 
-const OAUTH_SCOPES = [
-  'https://www.googleapis.com/auth/forms.body',
-  'https://www.googleapis.com/auth/drive.file',
-  ...(googleFormsFolderId ? ['https://www.googleapis.com/auth/drive.folder'] : []),
-].join(' ');
+const OAUTH_SCOPES = 'https://www.googleapis.com/auth/forms.body https://www.googleapis.com/auth/drive.file';
+
+const isOAuthMode = () => Boolean(googleOAuthRefreshToken);
 
 function defaultScopes() {
-  return googleOAuthRefreshToken ? OAUTH_SCOPES : SA_SCOPES;
+  return isOAuthMode() ? OAUTH_SCOPES : SA_SCOPES;
 }
 
 let cached = { token: null, expiresAt: 0, scopes: '' };
@@ -143,4 +141,4 @@ async function getAccessToken(scopes = defaultScopes()) {
   return token;
 }
 
-module.exports = { getAccessToken, getCredentials };
+module.exports = { getAccessToken, getCredentials, isOAuthMode };

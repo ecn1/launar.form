@@ -1,7 +1,7 @@
 // Thin REST client for the Google Forms API (+ Drive for sharing/deleting).
 // Scopes are chosen by gauth based on the configured auth mode.
 
-const { getAccessToken } = require('./gauth');
+const { getAccessToken, isOAuthMode } = require('./gauth');
 const { googleFormsFolderId } = require('../config');
 
 const FORMS_BASE = 'https://forms.googleapis.com/v1/forms';
@@ -60,7 +60,9 @@ function resolveFolderId(input) {
  * identical form; its description is then set through the Forms API.
  */
 async function createForm({ title, description }) {
-  const folderId = resolveFolderId(googleFormsFolderId);
+  // OAuth's drive.file scope cannot place files into pre-existing folders the
+  // app didn't create, so folder organization only applies to SA mode.
+  const folderId = isOAuthMode() ? null : resolveFolderId(googleFormsFolderId);
 
   const { data: file } = await callGoogle(`${DRIVE_BASE}?fields=id`, {
     method: 'POST',
