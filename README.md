@@ -38,10 +38,10 @@ All management commands require **Manage Server**. `/formlist` and `/help` are o
 2. **Bot** tab → **Reset Token** → copy it. *(No privileged intents are needed for this bot.)*
 3. **General Information** → copy the **Application ID**.
 
-Invite it (Manage Server + Embed Links + history are all it needs):
+Invite it (least-privilege: view/send/embed/read-history only):
 
 ```
-https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=805825536&scope=bot%20applications.commands
+https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=84992&scope=bot%20applications.commands
 ```
 
 ### 2. Google authorization (only for `/createform` & `/delform`)
