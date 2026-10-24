@@ -1,17 +1,14 @@
 // Thin REST client for the Google Forms API (+ Drive for sharing/deleting).
-// Scope note: forms.body creates/updates forms; drive manages the form file's
-// link-sharing permission and deletion.
+// Scopes are chosen by gauth based on the configured auth mode.
 
 const { getAccessToken } = require('./gauth');
 const { googleFormsFolderId } = require('../config');
-
-const SCOPES = 'https://www.googleapis.com/auth/forms.body https://www.googleapis.com/auth/drive';
 
 const FORMS_BASE = 'https://forms.googleapis.com/v1/forms';
 const DRIVE_BASE = 'https://www.googleapis.com/drive/v3/files';
 
 async function callGoogle(url, { method = 'GET', body } = {}) {
-  const token = await getAccessToken(SCOPES);
+  const token = await getAccessToken();
 
   const res = await fetch(url, {
     method,
@@ -34,8 +31,8 @@ async function callGoogle(url, { method = 'GET', body } = {}) {
 
     if (res.status === 403 && /storage quota/i.test(String(message))) {
       message +=
-        ' — Service accounts have no Drive storage of their own. Share a Drive folder with the ' +
-        'service-account email (as Editor) and set GOOGLE_FORMS_FOLDER_ID to that folder (see README §2, step 6).';
+        ' — Service accounts have no Drive storage of their own, and files they create are owned by them. ' +
+        'Use the OAuth setup instead (README §2 Option A) so forms are created as your own account.';
     }
 
     const err = new Error(`Google API ${method} failed (${res.status}): ${String(message).slice(0, 500)}`);

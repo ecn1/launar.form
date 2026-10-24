@@ -44,27 +44,31 @@ Invite it (Manage Server + Embed Links + history are all it needs):
 https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=805825536&scope=bot%20applications.commands
 ```
 
-### 2. Google service account (only for `/createform` & `/delform`)
+### 2. Google authorization (only for `/createform` & `/delform`)
 
-One-time, ~5 minutes:
+#### Option A — OAuth as your own account (recommended, works on free Gmail)
 
-1. Go to [console.cloud.google.com](https://console.cloud.google.com) → create a project (any name, e.g. `launar-form`).
-2. **APIs & Services → Library** → enable **Google Forms API** and **Google Drive API**.
-3. **APIs & Services → Credentials → Create credentials → Service account** → name it → **Create and continue** (skip roles) → **Done**.
-4. Click the new service account → **Keys → Add key → Create new key → JSON** → the key file downloads. **Keep it secret** — it's a password.
-5. Give the bot the key: either
-   - set `GOOGLE_SERVICE_ACCOUNT_JSON` to the **entire contents** of that file (easiest on Pterodactyl panels), or
-   - upload the file next to the bot and set `GOOGLE_SERVICE_ACCOUNT_FILE=service-account.json`.
-6. **Share a Drive folder with the service account** (required for `/createform` on free Gmail projects — service accounts have no storage of their own):
-   - Go to [drive.google.com](https://drive.google.com) → **New → Folder** → name it `launar.forms`.
-   - Right-click the folder → **Share** → paste the service-account email (shown in the key file as `client_email`, e.g. `launar-form@your-project.iam.gserviceaccount.com`) → give it **Editor** → send.
-   - Copy the folder ID from its URL (`…/folders/`**`THIS_PART`**) and set `GOOGLE_FORMS_FOLDER_ID` to it.
+Forms are created **as you** — they land in your Drive and use your quota. One-time setup, ~5 minutes:
 
-   Every bot-created form lands in that folder and counts against **your** Drive quota (a form costs ~0 MB — it's a doc, not a file).
+1. [console.cloud.google.com](https://console.cloud.google.com) → pick your `launar-form` project.
+2. **APIs & Services → Library** → enable **Google Forms API** and **Google Drive API** (already done if you followed the service-account route).
+3. **APIs & Services → OAuth consent screen** → user type **External** → app name `launar.form` + your email → save → under **Audience/Publishing** press **Publish app** (the "unverified" warning is expected; you approve only your own account).
+4. **APIs & Services → Credentials → Create credentials → OAuth client ID** → type **Desktop app** → copy the **Client ID** and **Client secret** into `.env` as `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET`.
+5. Run the helper and follow it:
+   ```bash
+   node scripts/authorize.js
+   # open the printed link, approve, copy the ?code=… from the address bar, then:
+   node scripts/authorize.js "PASTED_CODE_OR_URL"
+   ```
+6. Put the printed `GOOGLE_OAUTH_REFRESH_TOKEN=…` line into `.env` (and later into your host panel). Done — forever, unless you revoke it.
 
-> Forms the bot creates land in your shared `launar.forms` folder and respondents just see a normal form — no sign-in, no extra steps.
+> The bot requests only `forms.body` + `drive.file` (+ `drive.folder` if you set `GOOGLE_FORMS_FOLDER_ID`) — it can only manage the forms it creates itself.
 
-> ⚠️ On free Gmail projects the SA can't create files at the Drive root (no storage quota) — that's what step 6 fixes. If `/createform` ever reports a storage-quota error, the folder isn't shared or `GOOGLE_FORMS_FOLDER_ID` is missing.
+#### Option B — Service account (advanced)
+
+A service-account key also works, but **only on Google Workspace** (where forms can be created in a shared drive). On free Gmail projects, service accounts have **no Drive storage quota** and files they create are owned by them — creation fails with `403 storageQuotaExceeded` no matter what folders you share (verified the hard way). Skip this on free accounts.
+
+To use it anyway: enable Forms + Drive APIs, create a service account, download its JSON key, and set `GOOGLE_SERVICE_ACCOUNT_JSON` (whole file as one variable) or `GOOGLE_SERVICE_ACCOUNT_FILE=path`. `/shareform`, `/formlist` and `/help` never need any of this.
 
 ### 3. Configure & run
 
