@@ -365,6 +365,8 @@ async function handleComponent(interaction) {
   switch (action) {
     case 'open':
       return handlePanelButton(interaction);
+    case 'reason':
+      return handleReasonModal(interaction);
     case 'claim':
       return handleClaim(interaction);
     case 'close':
@@ -374,6 +376,7 @@ async function handleComponent(interaction) {
     case 'closemodal':
       return handleCloseModal(interaction);
     default:
+      console.warn(`[launar.form] unknown ticket component: ${interaction.customId}`);
       return null;
   }
 }
