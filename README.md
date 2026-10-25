@@ -18,15 +18,29 @@
 - 🗂️ **Form registry** — `/formlist` shows everything tracked in the server; `/delform` (with type-to-search autocomplete) removes the Discord post, the registry entry **and** the Google Form file itself.
 - 🪶 **Tiny footprint** — no `googleapis` package; a ~4 KB JWT/REST client instead. Comfortably fits free hosts with a few hundred MB of disk.
 
-## 📖 Commands (5)
+## 📖 Commands (6 top-level)
 
 | | Command | Description |
 |---|---|---|
-| 📝 | `/createform` `[title] [description] [image] [channel]` | Create a Google Form and post its card. Omit options to use defaults. |
+| 📝 | `/createform` `[title] [description] [question1-3] [image] [channel]` | Create a Google Form **with questions** and post its card. Omit options to use defaults. |
 | 🔗 | `/shareform` `link [title] [description] [image] [channel]` | Post an existing Google Forms link as a card |
 | 📋 | `/formlist` | List every tracked form in this server |
 | 🗑️ | `/delform` `form` | Remove a tracked form (post + registry + the Google Form file) |
+| 🎫 | `/tickets …` | Full ticket system — see below |
 | 🌙 | `/help` | Command guide |
+
+### 🎫 Ticket system
+
+Admins (**Manage Server**) configure everything under `/tickets`:
+
+1. `/tickets panel add name:Support emoji:🛠️ description:Help from staff` — add panels (up to 25)
+2. `/tickets panel post` — post the panel selector embed with a button per panel
+3. `/tickets category` — where ticket channels are created
+4. `/tickets support-add @Role` — roles that see & manage tickets (admins always can)
+5. `/tickets logs #log-channel` — closed tickets are summarized here
+6. `/tickets enable` — turn it on (`/tickets disable` pauses it anytime)
+
+**How a ticket works:** a member clicks a panel button → a modal asks **why they're opening the ticket** → the bot creates a private channel named `<panel>-<display-name>` visible only to the creator, support roles and admins → an embed shows the creator, panel, reason and ticket number, with **🗑️ Close** (reason modal), **🙋 Claim** (staff) and **⛔ Close & Ticket-Ban** buttons. Closing edits the embed, logs a summary to the log channel and deletes the channel after 10 seconds. One open ticket per member; `/tickets ban/unban/blacklist` manage abusers.
 
 All management commands require **Manage Server**. `/formlist` and `/help` are open to everyone.
 
@@ -38,10 +52,10 @@ All management commands require **Manage Server**. `/formlist` and `/help` are o
 2. **Bot** tab → **Reset Token** → copy it. *(No privileged intents are needed for this bot.)*
 3. **General Information** → copy the **Application ID**.
 
-Invite it (least-privilege: view/send/embed/read-history only):
+Invite it (View/Send/Embed/History + Manage Channels for ticket channels):
 
 ```
-https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=84992&scope=bot%20applications.commands
+https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=85008&scope=bot%20applications.commands
 ```
 
 ### 2. Google authorization (only for `/createform` & `/delform`)

@@ -19,7 +19,7 @@ module.exports = {
         {
           name: '📝 Forms',
           value: [
-            '`/createform` — create a real Google Form (title, description, image, target channel) and post it',
+            '`/createform` — create a real Google Form (title, description, questions, image, target channel) and post it',
             '`/shareform` — post a form link you already have (no Google setup needed)',
             '`/formlist` — list every tracked form in this server',
             '`/delform` — remove a form: deletes the post, the registry entry and the Google Form itself',
@@ -27,11 +27,24 @@ module.exports = {
           inline: false,
         },
         {
+          name: '🎫 Ticket system',
+          value: [
+            '`/tickets panel add` / `remove` / `post` — build the panel selector (unlimited panels in practice, up to 25 buttons)',
+            '`/tickets enable` / `disable` — turn the whole system on or off',
+            '`/tickets category` / `logs` — where ticket channels are created and where closed tickets are logged',
+            '`/tickets support-add` / `support-remove` — roles that can see and manage tickets',
+            '`/tickets ban` / `unban` / `blacklist` — members forbidden from creating tickets',
+            '`/tickets status` — full configuration overview',
+          ].join('\n'),
+          inline: false,
+        },
+        {
           name: '✨ Good to know',
           value:
-            '• `/createform` needs a **Google service account** — one-time setup in the README (enable Forms API + Drive API).\n' +
+            '• `/createform` needs the **Google OAuth setup** — one-time, in the README (§2).\n' +
             '• `/shareform`, `/formlist` and `/help` work with zero Google setup.\n' +
-            '• Form cards are posted by admins (**Manage Server**) into any channel the bot can write in.',
+            '• Members click a panel button, write a reason, and get a **private channel** with staff + admins.\n' +
+            '• Every ticket has Close, Close & Ticket-Ban, and Claim buttons; closed tickets are logged.',
           inline: false,
         }
       )
